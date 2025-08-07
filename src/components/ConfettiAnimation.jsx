@@ -1,0 +1,1 @@
+// Placeholder for components/ConfettiAnimation.jsx
