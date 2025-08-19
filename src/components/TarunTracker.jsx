@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../utils/supabaseClient';
+import React, { useEffect, useState } from "react";
+import { supabase } from "../utils/supabaseClient";
 
-export default function TarunTracker() {
-  const [count, setCount] = useState(null);
+function getTodayStartISO() {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now.toISOString();
+}
+
+export default function TarunTracker({ resetTrigger }) {
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     async function fetchCount() {
+      const todayStart = getTodayStartISO();
       const { data, error } = await supabase
-        .from('mood_logs')
-        .select('code', { count: 'exact' })
-        .gte('code', 2);
+        .from("mood_logs")
+        .select("code")
+        .gte("created_at", todayStart)
+        .gte("code", 2);
+
       setCount(data ? data.length : 0);
     }
     fetchCount();
-  }, []);
+  }, [resetTrigger]);
 
   return (
     <div>
       <h3>Tarun Tracker</h3>
       <p>
-        Boss hit Code 2+ <b>{count !== null ? count : '...'}</b> times.
+        Boss hit Code 2+ <b>{count}</b> times.
         <br />
-        {count !== null && count < 5 ? '🍜 Tarun wins Chinese food!' : 'No noodles for Tarun yet.'}
+        {count >= 5
+          ? "🍜 Tarun wins Chinese food!"
+          : "No noodles for Tarun yet."}
       </p>
     </div>
   );
