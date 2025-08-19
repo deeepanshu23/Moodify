@@ -9,7 +9,7 @@ const moodCodes = [
   { code: 0, label: "🔥 Meltdown" },
 ];
 
-export default function MoodLogger() {
+export default function MoodLogger({ setResetTrigger }) {
   const [selected, setSelected] = useState(null);
   const [status, setStatus] = useState("");
 
@@ -20,6 +20,7 @@ export default function MoodLogger() {
       .from("mood_logs")
       .insert([{ code: selected, username: "Agent" }]);
     setStatus(error ? "Error logging mood." : "Mood logged!");
+    if (!error && setResetTrigger) setResetTrigger((t) => t + 1); // trigger refresh
   }
 
   return (
